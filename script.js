@@ -65,12 +65,22 @@ function animate() {
     platform.draw();
   });
   player.update();
-  if (keys.right.pressed) {
+  if (keys.right.pressed && player.position.x <= 600) {
     player.velocity.x = 5;
-  } else if (keys.left.pressed) {
+  } else if (keys.left.pressed && player.position.x >= 100) {
     player.velocity.x = -5;
   } else {
     player.velocity.x = 0;
+
+    if (keys.right.pressed) {
+      platforms.forEach((platform) => {
+        platform.position.x -= 5;
+      });
+    } else if (keys.left.pressed) {
+      platforms.forEach((platform) => {
+        platform.position.x += 5;
+      });
+    }
   }
 
   platforms.forEach((platform) => {
