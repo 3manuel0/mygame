@@ -29,7 +29,25 @@ class Player {
     else this.velocity.y = 0;
   }
 }
+class Platform {
+  constructor({ x, y }) {
+    this.position = {
+      x,
+      y,
+    };
+    this.height = 20;
+    this.width = 200;
+  }
+  draw() {
+    c.fillStyle = "blue";
+    c.fillRect(this.position.x, this.position.y, this.width, this.height);
+  }
+}
 const player = new Player();
+const platforms = [
+  new Platform({ x: 200, y: 100 }),
+  new Platform({ x: 300, y: 400 }),
+];
 const keys = {
   right: {
     pressed: false,
@@ -43,6 +61,9 @@ player.draw();
 function animate() {
   requestAnimationFrame(animate);
   c.clearRect(0, 0, canvas.width, canvas.height);
+  platforms.forEach((platform) => {
+    platform.draw();
+  });
   player.update();
   if (keys.right.pressed) {
     player.velocity.x = 5;
@@ -51,6 +72,20 @@ function animate() {
   } else {
     player.velocity.x = 0;
   }
+
+  platforms.forEach((platform) => {
+    if (
+      player.position.y + player.height <= platform.position.y &&
+      player.position.y + player.height + player.velocity.y >=
+        platform.position.y &&
+      player.position.x + player.width >= platform.position.x &&
+      player.position.x <= platform.position.x + platform.width
+    ) {
+      console.log(platform.position.x + platform.width);
+      console.log(player.position.x);
+      player.velocity.y = 0;
+    }
+  });
 }
 animate();
 
@@ -58,13 +93,17 @@ addEventListener("keydown", ({ keyCode }) => {
   console.log(keyCode);
   switch (keyCode) {
     case 87:
-      if (
-        player.position.y + player.height + player.velocity.y >=
-        canvas.height
-      ) {
-        player.velocity.y = -20;
-        console.log("up");
-      }
+      platforms.forEach((platform) => {
+        if (
+          player.position.y + player.height + player.velocity.y >=
+            canvas.height ||
+          player.position.y + player.height + player.velocity.y >=
+            platform.position.y + platform.height
+        ) {
+          player.velocity.y = -20;
+          console.log("up");
+        }
+      });
       break;
     case 68:
       keys.right.pressed = true;
