@@ -49,7 +49,7 @@ class Player {
       this.currentSprite,
       614 * this.frames,
       0,
-      400,
+      360,
       500,
       this.position.x,
       this.position.y,
