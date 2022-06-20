@@ -143,12 +143,14 @@ function animate() {
     player.currentSprite = player.sprites.run.left;
   } else if (
     !keys.right.pressed &&
+    !keys.left.pressed &&
     lastKey === "right" &&
     player.currentSprite == player.sprites.run.right
   ) {
     player.frames = 1;
     player.currentSprite = player.sprites.stand.right;
   } else if (
+    !keys.right.pressed &&
     !keys.left.pressed &&
     lastKey === "left" &&
     player.currentSprite == player.sprites.run.left
