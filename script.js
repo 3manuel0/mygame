@@ -6,13 +6,15 @@ const gravity = 0.5;
 const platform = "imgs/platform.png";
 const background = "imgs/background.png";
 const hills = "imgs/hills.png";
-const playerIdle = "imgs/spr_m_traveler_idle_anim.gif";
+const playerIdleright = "imgs/idleright.png";
+const playerIdleleft = "imgs/idleleft.png";
+const runRight = "imgs/run-right.png";
+const runLeft = "imgs/run-left.png";
 function createImage(imageSrc) {
   const image = new Image();
   image.src = imageSrc;
   return image;
 }
-console.log(createImage(playerIdle));
 const platformImage = createImage(platform);
 let scrollOffset = 0;
 console.log(platformImage);
@@ -27,13 +29,37 @@ class Player {
       y: 0,
     };
     this.width = 60;
-    this.height = 60;
-    this.image = createImage(playerIdle);
+    this.height = 150;
+    this.image = createImage(playerIdleright);
+    this.frames = 0;
+    this.sprites = {
+      stand: {
+        right: createImage(playerIdleright),
+        left: createImage(playerIdleleft),
+      },
+      run: {
+        right: createImage(runRight),
+        left: createImage(runLeft),
+      },
+    };
+    this.currentSprite = this.sprites.stand.right;
   }
   draw() {
-    c.drawImage(this.image, this.position.x, this.position.y);
+    c.drawImage(
+      this.currentSprite,
+      614 * this.frames,
+      0,
+      400,
+      500,
+      this.position.x,
+      this.position.y,
+      this.width,
+      this.height
+    );
   }
   update() {
+    this.frames++;
+    if (this.frames > 15) this.frames = 0;
     this.draw();
     this.position.x += this.velocity.x;
     this.position.y += this.velocity.y;
@@ -87,6 +113,7 @@ const keys = {
     pressed: false,
   },
 };
+let lastKey;
 player.draw();
 
 function animate() {
@@ -100,9 +127,37 @@ function animate() {
     platform.draw();
   });
   player.update();
-
-  // player movements and background scroll
+  if (
+    keys.right.pressed &&
+    lastKey === "right" &&
+    player.currentSprite !== player.sprites.run.right
+  ) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.run.right;
+  } else if (
+    keys.left.pressed &&
+    lastKey === "left" &&
+    player.currentSprite !== player.sprites.run.left
+  ) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.run.left;
+  } else if (
+    !keys.right.pressed &&
+    lastKey === "right" &&
+    player.currentSprite == player.sprites.run.right
+  ) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.stand.right;
+  } else if (
+    !keys.left.pressed &&
+    lastKey === "left" &&
+    player.currentSprite == player.sprites.run.left
+  ) {
+    player.frames = 1;
+    player.currentSprite = player.sprites.stand.left;
+  }
   if (keys.right.pressed && player.position.x <= 400) {
+    // player movements and background scroll
     player.velocity.x = 5;
   } else if (keys.left.pressed && player.position.x >= 100) {
     player.velocity.x = -5;
@@ -125,8 +180,8 @@ function animate() {
         platform.position.x += 5;
       });
     }
-    // win condition
     if (scrollOffset >= 2500) {
+      // win condition
       console.log("you win");
     }
     // lose condition
@@ -157,18 +212,18 @@ addEventListener("keydown", ({ keyCode }) => {
     case 87:
       platforms.forEach((platform) => {
         if (player.velocity.y == 0) {
-          player.velocity.y = -20;
+          player.velocity.y = -15.5;
           console.log("up");
         }
       });
       break;
     case 68:
+      lastKey = "right";
       keys.right.pressed = true;
-      console.log("right");
       break;
     case 65:
+      lastKey = "left";
       keys.left.pressed = true;
-      console.log("left");
       break;
   }
 });
@@ -180,11 +235,9 @@ addEventListener("keyup", ({ keyCode }) => {
       break;
     case 68:
       keys.right.pressed = false;
-      console.log("right");
       break;
     case 65:
       keys.left.pressed = false;
-      console.log("left");
       break;
   }
 });
