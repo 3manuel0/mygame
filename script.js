@@ -15,9 +15,24 @@ function createImage(imageSrc) {
   image.src = imageSrc;
   return image;
 }
+const platformSmallTall = createImage("imgs/platformSmallTall.png");
 const platformImage = createImage(platform);
 let scrollOffset = 0;
 console.log(platformImage);
+class Platform {
+  constructor({ x, y, image }) {
+    this.position = {
+      x,
+      y,
+    };
+    this.image = image;
+    this.height = this.image.height;
+    this.width = this.image.width;
+  }
+  draw() {
+    c.drawImage(this.image, this.position.x, this.position.y);
+  }
+}
 class Player {
   constructor() {
     this.position = {
@@ -65,20 +80,7 @@ class Player {
     this.position.y += this.velocity.y;
     if (this.position.y + this.height + this.velocity.y <= canvas.height)
       this.velocity.y += gravity;
-  }
-}
-class Platform {
-  constructor({ x, y, image }) {
-    this.position = {
-      x,
-      y,
-    };
-    this.image = image;
-    this.height = this.image.height;
-    this.width = this.image.width;
-  }
-  draw() {
-    c.drawImage(this.image, this.position.x, this.position.y);
+    console.log(this.velocity.y);
   }
 }
 class GenericObject {
@@ -96,9 +98,12 @@ class GenericObject {
   }
 }
 const platforms = [
+  new Platform({ x: 1900, y: 300, image: platformSmallTall }),
   new Platform({ x: -6, y: 480, image: platformImage }),
   new Platform({ x: 800, y: 480, image: platformImage }),
   new Platform({ x: 1600, y: 480, image: platformImage }),
+  new Platform({ x: 2600, y: 480, image: platformImage }),
+  new Platform({ x: 3300, y: 400, image: platformSmallTall }),
 ];
 const player = new Player();
 const genericObjects = [
@@ -165,7 +170,7 @@ function animate() {
     player.velocity.x = -5;
   } else {
     player.velocity.x = 0;
-    if (keys.right.pressed && scrollOffset <= 2500) {
+    if (keys.right.pressed && scrollOffset <= 3000) {
       scrollOffset += 5;
       genericObjects.forEach((genericObject) => {
         genericObject.position.x -= 2;
@@ -182,7 +187,7 @@ function animate() {
         platform.position.x += 5;
       });
     }
-    if (scrollOffset >= 2500) {
+    if (scrollOffset >= 3000) {
       // win condition
       console.log("you win");
     }
@@ -214,7 +219,7 @@ addEventListener("keydown", ({ keyCode }) => {
     case 87:
       platforms.forEach((platform) => {
         if (player.velocity.y == 0) {
-          player.velocity.y = -15.5;
+          player.velocity.y = -16;
           console.log("up");
         }
       });
