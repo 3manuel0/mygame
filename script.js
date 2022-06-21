@@ -95,12 +95,12 @@ class GenericObject {
     c.drawImage(this.image, this.position.x, this.position.y);
   }
 }
-const player = new Player();
 const platforms = [
   new Platform({ x: -6, y: 480, image: platformImage }),
   new Platform({ x: 800, y: 480, image: platformImage }),
   new Platform({ x: 1600, y: 480, image: platformImage }),
 ];
+const player = new Player();
 const genericObjects = [
   new GenericObject({ x: -4, y: -1, image: createImage(background) }),
   new GenericObject({ x: -1, y: -1, image: createImage(hills) }),
