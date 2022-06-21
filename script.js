@@ -18,6 +18,7 @@ function createImage(imageSrc) {
 const platformSmallTall = createImage("imgs/platformSmallTall.png");
 const platformImage = createImage(platform);
 let scrollOffset = 0;
+let onGround;
 console.log(platformImage);
 class Platform {
   constructor({ x, y, image }) {
@@ -132,71 +133,6 @@ function animate() {
     platform.draw();
   });
   player.update();
-  if (
-    keys.right.pressed &&
-    lastKey === "right" &&
-    player.currentSprite !== player.sprites.run.right
-  ) {
-    player.frames = 1;
-    player.currentSprite = player.sprites.run.right;
-  } else if (
-    keys.left.pressed &&
-    lastKey === "left" &&
-    player.currentSprite !== player.sprites.run.left
-  ) {
-    player.frames = 1;
-    player.currentSprite = player.sprites.run.left;
-  } else if (
-    !keys.right.pressed &&
-    !keys.left.pressed &&
-    lastKey === "right" &&
-    player.currentSprite == player.sprites.run.right
-  ) {
-    player.frames = 1;
-    player.currentSprite = player.sprites.stand.right;
-  } else if (
-    !keys.right.pressed &&
-    !keys.left.pressed &&
-    lastKey === "left" &&
-    player.currentSprite == player.sprites.run.left
-  ) {
-    player.frames = 1;
-    player.currentSprite = player.sprites.stand.left;
-  }
-  if (keys.right.pressed && player.position.x <= 400) {
-    // player movements and background scroll
-    player.velocity.x = 5;
-  } else if (keys.left.pressed && player.position.x >= 100) {
-    player.velocity.x = -5;
-  } else {
-    player.velocity.x = 0;
-    if (keys.right.pressed && scrollOffset <= 3000) {
-      scrollOffset += 5;
-      genericObjects.forEach((genericObject) => {
-        genericObject.position.x -= 2;
-      });
-      platforms.forEach((platform) => {
-        platform.position.x -= 5;
-      });
-    } else if (keys.left.pressed && scrollOffset >= 0) {
-      scrollOffset -= 5;
-      genericObjects.forEach((genericObject) => {
-        genericObject.position.x += 2;
-      });
-      platforms.forEach((platform) => {
-        platform.position.x += 5;
-      });
-    }
-    if (scrollOffset >= 3000) {
-      // win condition
-      console.log("you win");
-    }
-    // lose condition
-    if (player.position.y > canvas.height) {
-      location.reload();
-    }
-  }
-
   // platfrome collision detection
   platforms.forEach((platform) => {
     if (
@@ -207,8 +143,73 @@ function animate() {
       player.position.x <= platform.position.x + platform.width
     ) {
       player.velocity.y = 0;
+      onGround = true;
     }
   });
+}
+if (
+  keys.right.pressed &&
+  lastKey === "right" &&
+  player.currentSprite !== player.sprites.run.right
+) {
+  player.frames = 1;
+  player.currentSprite = player.sprites.run.right;
+} else if (
+  keys.left.pressed &&
+  lastKey === "left" &&
+  player.currentSprite !== player.sprites.run.left
+) {
+  player.frames = 1;
+  player.currentSprite = player.sprites.run.left;
+} else if (
+  !keys.right.pressed &&
+  !keys.left.pressed &&
+  lastKey === "right" &&
+  player.currentSprite == player.sprites.run.right
+) {
+  player.frames = 1;
+  player.currentSprite = player.sprites.stand.right;
+} else if (
+  !keys.right.pressed &&
+  !keys.left.pressed &&
+  lastKey === "left" &&
+  player.currentSprite == player.sprites.run.left
+) {
+  player.frames = 1;
+  player.currentSprite = player.sprites.stand.left;
+}
+if (keys.right.pressed && player.position.x <= 400) {
+  // player movements and background scroll
+  player.velocity.x = 5;
+} else if (keys.left.pressed && player.position.x >= 100) {
+  player.velocity.x = -5;
+} else {
+  player.velocity.x = 0;
+  if (keys.right.pressed && scrollOffset <= 3000) {
+    scrollOffset += 5;
+    genericObjects.forEach((genericObject) => {
+      genericObject.position.x -= 2;
+    });
+    platforms.forEach((platform) => {
+      platform.position.x -= 5;
+    });
+  } else if (keys.left.pressed && scrollOffset >= 0) {
+    scrollOffset -= 5;
+    genericObjects.forEach((genericObject) => {
+      genericObject.position.x += 2;
+    });
+    platforms.forEach((platform) => {
+      platform.position.x += 5;
+    });
+  }
+  if (scrollOffset >= 3000) {
+    // win condition
+    console.log("you win");
+  }
+  // lose condition
+  if (player.position.y > canvas.height) {
+    location.reload();
+  }
 }
 animate();
 
@@ -218,8 +219,9 @@ addEventListener("keydown", ({ keyCode }) => {
   switch (keyCode) {
     case 87:
       platforms.forEach((platform) => {
-        if (player.velocity.y == 0) {
-          player.velocity.y = -16;
+        if (player.velocity.y == 0 && onGround) {
+          player.velocity.y = -17;
+          onGround = false;
           console.log("up");
         }
       });
