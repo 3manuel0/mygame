@@ -2,7 +2,6 @@ const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 canvas.width = 1024;
 canvas.height = 576;
-const gravity = 0.5;
 const platform = "imgs/platform.png";
 const background = "imgs/background.png";
 const hills = "imgs/hills.png";
@@ -111,6 +110,7 @@ const genericObjects = [
   new GenericObject({ x: -4, y: -1, image: createImage(background) }),
   new GenericObject({ x: -1, y: -1, image: createImage(hills) }),
 ];
+const gravity = 0.5;
 const keys = {
   right: {
     pressed: false,
@@ -193,8 +193,8 @@ function animate() {
       console.log("you win");
     }
     // lose condition
-    if (player.position.y > canvas.height) {
-      location.reload();
+    if (player.position.y >= canvas.height) {
+      window.location.reload();
     }
   }
 
