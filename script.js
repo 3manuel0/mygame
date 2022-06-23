@@ -97,7 +97,7 @@ class GenericObject {
     c.drawImage(this.image, this.position.x, this.position.y);
   }
 }
-const platforms = [
+let platforms = [
   new Platform({ x: 1900, y: 300, image: platformSmallTall }),
   new Platform({ x: -6, y: 480, image: platformImage }),
   new Platform({ x: 800, y: 480, image: platformImage }),
@@ -105,8 +105,8 @@ const platforms = [
   new Platform({ x: 2600, y: 480, image: platformImage }),
   new Platform({ x: 3300, y: 400, image: platformSmallTall }),
 ];
-const player = new Player();
-const genericObjects = [
+let player = new Player();
+let genericObjects = [
   new GenericObject({ x: -4, y: -1, image: createImage(background) }),
   new GenericObject({ x: -1, y: -1, image: createImage(hills) }),
 ];
@@ -120,8 +120,22 @@ const keys = {
   },
 };
 let lastKey;
-player.draw();
-
+function init() {
+  player = new Player();
+  platforms = [
+    new Platform({ x: 1900, y: 300, image: platformSmallTall }),
+    new Platform({ x: -6, y: 480, image: platformImage }),
+    new Platform({ x: 800, y: 480, image: platformImage }),
+    new Platform({ x: 1600, y: 480, image: platformImage }),
+    new Platform({ x: 2600, y: 480, image: platformImage }),
+    new Platform({ x: 3300, y: 400, image: platformSmallTall }),
+  ];
+  genericObjects = [
+    new GenericObject({ x: -4, y: -1, image: createImage(background) }),
+    new GenericObject({ x: -1, y: -1, image: createImage(hills) }),
+  ];
+  scrollOffset = 0;
+}
 function animate() {
   requestAnimationFrame(animate);
   c.fillStyle = "white";
@@ -167,7 +181,10 @@ function animate() {
   if (keys.right.pressed && player.position.x <= 400) {
     // player movements and background scroll
     player.velocity.x = 5;
-  } else if (keys.left.pressed && player.position.x >= 100) {
+  } else if (
+    (keys.left.pressed && player.position.x > 100) ||
+    (keys.left.pressed && scrollOffset === 0 && player.position.x > 0)
+  ) {
     player.velocity.x = -5;
   } else {
     player.velocity.x = 0;
@@ -179,7 +196,7 @@ function animate() {
       platforms.forEach((platform) => {
         platform.position.x -= 5;
       });
-    } else if (keys.left.pressed && scrollOffset >= 0) {
+    } else if (keys.left.pressed && scrollOffset > 0) {
       scrollOffset -= 5;
       genericObjects.forEach((genericObject) => {
         genericObject.position.x += 2;
@@ -194,7 +211,7 @@ function animate() {
     }
     // lose condition
     if (player.position.y >= canvas.height) {
-      window.location.reload();
+      init();
     }
   }
 
