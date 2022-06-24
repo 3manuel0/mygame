@@ -2,7 +2,6 @@ const canvas = document.querySelector("canvas");
 const c = canvas.getContext("2d");
 canvas.width = 1024;
 canvas.height = 576;
-const platform = "imgs/platform.png";
 const background = "imgs/background.png";
 const hills = "imgs/hills.png";
 const playerIdleright = "imgs/idleright.png";
@@ -15,7 +14,7 @@ function createImage(imageSrc) {
   return image;
 }
 const platformSmallTall = createImage("imgs/platformSmallTall.png");
-const platformImage = createImage(platform);
+const platformImage = createImage("imgs/platform.png");
 let scrollOffset = 0;
 let onGround;
 console.log(platformImage);
@@ -120,6 +119,8 @@ const keys = {
   },
 };
 let lastKey;
+
+// reset game stats
 function init() {
   player = new Player();
   platforms = [
@@ -147,6 +148,7 @@ function animate() {
     platform.draw();
   });
   player.update();
+  // animation switch
   if (
     keys.right.pressed &&
     lastKey === "right" &&
@@ -178,8 +180,8 @@ function animate() {
     player.frames = 1;
     player.currentSprite = player.sprites.stand.left;
   }
+  // player movements and background scroll
   if (keys.right.pressed && player.position.x <= 400) {
-    // player movements and background scroll
     player.velocity.x = 5;
   } else if (
     (keys.left.pressed && player.position.x > 100) ||
