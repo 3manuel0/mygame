@@ -43,27 +43,32 @@ class Player {
       y: 0,
     };
     this.width = 60;
-    this.height = 150;
+    this.height = 160;
     this.image = createImage(playerIdleright);
     this.frames = 0;
     this.sprites = {
       stand: {
         right: createImage(playerIdleright),
         left: createImage(playerIdleleft),
+        cropWidth: 310,
+        width: this.width,
       },
       run: {
         right: createImage(runRight),
         left: createImage(runLeft),
+        cropWidth: 360,
+        width: 70,
       },
     };
     this.currentSprite = this.sprites.stand.right;
+    this.currentCropWidth = 300;
   }
   draw() {
     c.drawImage(
       this.currentSprite,
       614 * this.frames,
       0,
-      360,
+      this.currentCropWidth,
       500,
       this.position.x,
       this.position.y,
@@ -156,6 +161,8 @@ function animate() {
   ) {
     player.frames = 1;
     player.currentSprite = player.sprites.run.right;
+    player.currentCropWidth = player.sprites.run.cropWidth;
+    player.width = player.sprites.run.width;
   } else if (
     keys.left.pressed &&
     lastKey === "left" &&
@@ -163,6 +170,8 @@ function animate() {
   ) {
     player.frames = 1;
     player.currentSprite = player.sprites.run.left;
+    player.currentCropWidth = player.sprites.run.cropWidth;
+    player.width = player.sprites.run.width;
   } else if (
     !keys.right.pressed &&
     !keys.left.pressed &&
@@ -171,6 +180,8 @@ function animate() {
   ) {
     player.frames = 1;
     player.currentSprite = player.sprites.stand.right;
+    player.currentCropWidth = player.sprites.stand.cropWidth;
+    player.width = player.sprites.stand.width;
   } else if (
     !keys.right.pressed &&
     !keys.left.pressed &&
@@ -179,18 +190,20 @@ function animate() {
   ) {
     player.frames = 1;
     player.currentSprite = player.sprites.stand.left;
+    player.currentCropWidth = player.sprites.stand.cropWidth;
+    player.width = player.sprites.stand.width;
   }
   // player movements and background scroll
   if (keys.right.pressed && player.position.x <= 400) {
     player.velocity.x = 5;
   } else if (
-    (keys.left.pressed && player.position.x > 100) ||
+    (keys.left.pressed && player.position.x > 400) ||
     (keys.left.pressed && scrollOffset === 0 && player.position.x > 0)
   ) {
     player.velocity.x = -5;
   } else {
     player.velocity.x = 0;
-    if (keys.right.pressed && scrollOffset <= 3000) {
+    if (keys.right.pressed && scrollOffset <= 5000) {
       scrollOffset += 5;
       genericObjects.forEach((genericObject) => {
         genericObject.position.x -= 2;
